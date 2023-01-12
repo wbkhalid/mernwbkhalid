@@ -7,8 +7,23 @@ import {
   Typography,
 } from '@mui/material';
 import { NavLink } from 'react-router-dom';
+import { useState } from 'react';
 
 const Signup = () => {
+  const [user, setUser] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    work: '',
+    password: '',
+    cPassword: '',
+  });
+  let name, value;
+  const handleInputs = (e) => {
+    name = e.target.name;
+    value = e.target.value;
+    setUser({...user, [name]:value})
+  };
   return (
     <div className="App">
       <Typography gutterBottom variant="h3" align="center">
@@ -22,12 +37,14 @@ const Signup = () => {
                 <Grid xs={12} item>
                   <TextField
                     name="name"
-                    type='text'
+                    type="text"
                     placeholder="Enter name"
                     label="Name"
                     variant="outlined"
                     fullWidth
                     required
+                    value={user.name}
+                    onChange={handleInputs}
                   />
                 </Grid>
 
@@ -40,6 +57,8 @@ const Signup = () => {
                     variant="outlined"
                     fullWidth
                     required
+                    value={user.email}
+                    onChange={handleInputs}
                   />
                 </Grid>
 
@@ -52,6 +71,8 @@ const Signup = () => {
                     variant="outlined"
                     fullWidth
                     required
+                    value={user.phone}
+                    onChange={handleInputs}
                   />
                 </Grid>
 
@@ -63,30 +84,36 @@ const Signup = () => {
                     variant="outlined"
                     fullWidth
                     required
+                    value={user.work}
+                    onChange={handleInputs}
                   />
                 </Grid>
 
                 <Grid xs={12} item>
                   <TextField
                     name="password"
-                    type='password'
+                    type="password"
                     placeholder="Enter password"
                     label="Password"
                     variant="outlined"
                     fullWidth
                     required
+                    value={user.password}
+                    onChange={handleInputs}
                   />
                 </Grid>
 
                 <Grid xs={12} item>
                   <TextField
-                    name="confirm_password"
-                    type='password'
+                    name="cPassword"
+                    type="password"
                     placeholder="Enter password"
                     label="confirm_password"
                     variant="outlined"
                     fullWidth
                     required
+                    value={user.cPassword}
+                    onChange={handleInputs}
                   />
                 </Grid>
 
@@ -109,8 +136,13 @@ const Signup = () => {
           </Typography>
 
           <NavLink className="navbar-brand" to="/login">
-            <Typography gutterBottom variant="p" align="center" fontWeight='bold'>
-            Already Register
+            <Typography
+              gutterBottom
+              variant="p"
+              align="center"
+              fontWeight="bold"
+            >
+              Already Register
             </Typography>
           </NavLink>
         </Card>

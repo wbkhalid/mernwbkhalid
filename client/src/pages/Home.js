@@ -1,9 +1,18 @@
-
+import {
+  Grid,
+  Typography,
+} from '@mui/material';
 const Home = () => {
   return (
     <>
-      <p>Welcome</p>
-      <h1>We are Mern stack developer</h1>
+      <Grid display='grid' >
+        <Typography gutterBottom variant="h5" align="center">
+          Welcome
+        </Typography>
+        <Typography gutterBottom variant="h3" align="center">
+          We are Mern stack developer
+        </Typography>
+      </Grid>
     </>
   );
 };
