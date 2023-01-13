@@ -6,10 +6,11 @@ import {
   CardContent,
   Typography,
 } from '@mui/material';
-import { NavLink } from 'react-router-dom';
+import { NavLink,useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 const Signup = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState({
     name: '',
     email: '',
@@ -22,7 +23,35 @@ const Signup = () => {
   const handleInputs = (e) => {
     name = e.target.name;
     value = e.target.value;
-    setUser({...user, [name]:value})
+    setUser({ ...user, [name]: value });
+  };
+
+  const submitData = async (e) => {
+    e.preventDefault();
+    const { name, email, phone, work, password, cPassword } = user;
+    const res = await fetch('/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        phone,
+        work,
+        password,
+        cPassword,
+      }),
+    });
+    const data = await res.json();
+    if (data.status === 400 || !data) {
+      alert('Registeration Failed');
+      console.log('Registeration Failed');
+    } else {
+      alert('Registeration Successfully');
+      console.log('Registeration Successfully');
+      navigate('/login')
+    }
   };
   return (
     <div className="App">
@@ -32,7 +61,7 @@ const Signup = () => {
       <Grid>
         <Card style={{ maxWidth: 450, padding: '20px 5px', margin: '0 auto' }}>
           <CardContent>
-            <form>
+            <form method="POST">
               <Grid container spacing={1}>
                 <Grid xs={12} item>
                   <TextField
@@ -123,6 +152,7 @@ const Signup = () => {
                     variant="outlined"
                     color="primary"
                     fullWidth
+                    onClick={submitData}
                   >
                     Register
                   </Button>

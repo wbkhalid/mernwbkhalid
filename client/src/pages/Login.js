@@ -6,9 +6,34 @@ import {
   CardContent,
   Typography,
 } from '@mui/material';
-import { NavLink } from 'react-router-dom';
+import { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const loginUser = async (e) => {
+    e.preventDefault();
+    const res = await fetch('/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (data.status === 400 || !data) {
+      alert('Login Failed');
+      console.log('Login Failed');
+    } else {
+      alert('Login Successfully');
+      console.log('Login Successfully');
+
+      navigate('/')
+    }
+  };
   return (
     <div className="App">
       <Typography gutterBottom variant="h3" align="center">
@@ -17,7 +42,7 @@ const Login = () => {
       <Grid>
         <Card style={{ maxWidth: 450, padding: '20px 5px', margin: '0 auto' }}>
           <CardContent>
-            <form>
+            <form method="POST">
               <Grid container spacing={1}>
                 <Grid item xs={12}>
                   <TextField
@@ -28,6 +53,8 @@ const Login = () => {
                     variant="outlined"
                     fullWidth
                     required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </Grid>
 
@@ -40,6 +67,8 @@ const Login = () => {
                     variant="outlined"
                     fullWidth
                     required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </Grid>
 
@@ -49,6 +78,7 @@ const Login = () => {
                     variant="outlined"
                     color="primary"
                     fullWidth
+                    onClick={loginUser}
                   >
                     Login
                   </Button>
@@ -61,7 +91,12 @@ const Login = () => {
           </Typography>
 
           <NavLink className="navbar-brand" to="/signup">
-            <Typography gutterBottom variant="p" align="center" fontWeight='bold'>
+            <Typography
+              gutterBottom
+              variant="p"
+              align="center"
+              fontWeight="bold"
+            >
               If you do not already register
             </Typography>
           </NavLink>

@@ -33,23 +33,24 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/signin', async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(422).json({ error: 'Please fill all fields' });
-  }
   try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(422).json({ error: 'Please fill all fields' });
+    }
+
     const userLogin = await User.findOne({ email: email });
     if (userLogin) {
       const isMatch = await bcrypt.compare(password, userLogin.password);
       const token = await userLogin.generateAuthToken();
-      console.log(`hlo ${token}`)
+      console.log(`hlo ${token}`);
       if (!isMatch) {
-        return res.status(400).json({ error: 'user error ps' });
+        res.status(400).json({ error: 'user error ps' });
       } else {
-        return res.json({ message: 'user signin Sucessfully' });
+        res.json({ message: 'user signin Sucessfully' });
       }
     } else {
-      return res.status(400).json({ error: 'user error' });
+      res.status(400).json({ error: 'user error' });
     }
   } catch (e) {
     console.log(e);
