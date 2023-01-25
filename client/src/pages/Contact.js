@@ -6,8 +6,32 @@ import {
   CardContent,
   Typography,
 } from '@mui/material';
+import { useState, useEffect } from 'react';
 
 const Contact = () => {
+  const [userData, setUserData] = useState({});
+  const CallContactPage = async () => {
+    try {
+      const res = await fetch('/getData', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await res.json();
+      setUserData(data);
+      if (!res.status === 200) {
+        const error = new Error(res.error);
+        throw error;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    CallContactPage();
+  }, []);
+
   return (
     <div className="App">
       <Typography gutterBottom variant="h3" align="center">
@@ -22,8 +46,9 @@ const Contact = () => {
                   <TextField
                     name="name"
                     type="text"
+                    value={userData.name}
                     placeholder="Enter Name"
-                    label="Name"
+                   
                     variant="outlined"
                     sx={{
                       mx: 2,
@@ -35,7 +60,8 @@ const Contact = () => {
                     name="email"
                     type="email"
                     placeholder="Enter email"
-                    label="Email"
+                    value={userData.email}
+                    
                     variant="outlined"
                     sx={{
                       mx: 2,
@@ -48,7 +74,8 @@ const Contact = () => {
                     name="phone"
                     type="number"
                     placeholder="Enter phone number"
-                    label="Phone"
+                    value={userData.phone}
+                  
                     variant="outlined"
                     sx={{
                       mx: 2,
@@ -59,11 +86,11 @@ const Contact = () => {
 
                   <TextField
                     id="outlined-multiline-static"
-                    label="Message"
+                   placeholder='Please type your Reviews'
                     multiline
                     rows={5}
                     variant="outlined"
-                    sx={{ m:5, minWidth: 800, width:'auto' }}
+                    sx={{ m: 5, minWidth: 800, width: 'auto' }}
                   />
                 </Grid>
 

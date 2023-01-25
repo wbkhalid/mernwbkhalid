@@ -1,4 +1,5 @@
 const express = require('express');
+
 const dotenv = require('dotenv');
 const app = express();
 
@@ -11,18 +12,8 @@ app.use(require('../router/auth'));
 
 const PORT = process.env.PORT;
 
-//MiddleWare
-const middleware = (req, res, next) => {
-  console.log('middleware');
-  next();
-};
 
-app.get('/', (req, res) => {
-  res.send('hlo from home');
-});
-app.get('/about', middleware, (req, res) => {
-  res.send('hlo from about');
-});
+
 app.get('/contact', (req, res) => {
   res.send('hlo from contact');
 });

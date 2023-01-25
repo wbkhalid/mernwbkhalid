@@ -3,9 +3,12 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
 require('../db/conn');
 const User = require('../model/userSchema');
+const Authenticate = require('../middleware/Authenticate');
+const cookieParser = require("cookie-parser");
+
+router.use(cookieParser());
 
 router.get('/', (req, res) => {
   res.send('hlo from home Router');
@@ -43,7 +46,12 @@ router.post('/signin', async (req, res) => {
     if (userLogin) {
       const isMatch = await bcrypt.compare(password, userLogin.password);
       const token = await userLogin.generateAuthToken();
-      console.log(`hlo ${token}`);
+      
+
+      res.cookie('jwtoken',token,{
+        expires:new Date(Date.now()+25892000000),
+        httpOnly:true
+      })
       if (!isMatch) {
         res.status(400).json({ error: 'user error ps' });
       } else {
@@ -55,6 +63,17 @@ router.post('/signin', async (req, res) => {
   } catch (e) {
     console.log(e);
   }
+});
+
+router.get('/about',Authenticate, (req, res) => {
+  console.log('about us');
+  res.send(req.rootUser);
+
+});
+router.get('/getData',Authenticate, (req, res) => {
+  console.log('about us');
+  res.send(req.rootUser);
+
 });
 
 module.exports = router;
