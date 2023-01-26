@@ -9,7 +9,12 @@ import {
 import { useState, useEffect } from 'react';
 
 const Contact = () => {
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+  });
   const CallContactPage = async () => {
     try {
       const res = await fetch('/getData', {
@@ -19,7 +24,13 @@ const Contact = () => {
         },
       });
       const data = await res.json();
-      setUserData(data);
+      setUserData({
+        ...data,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        message:data.message
+      });
       if (!res.status === 200) {
         const error = new Error(res.error);
         throw error;
@@ -32,6 +43,40 @@ const Contact = () => {
     CallContactPage();
   }, []);
 
+  const handleInputs = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setUserData({ ...userData, [name]: value });
+    console.log(userData);
+  };
+
+  const ContactHandler = async (e) => {
+    e.preventDefault();
+    const {name, email, phone, message} = userData;
+    console.log(name, email, phone, message)
+    const res = await fetch('/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        phone,
+        message,
+      }),
+    });
+    const data = await res.json();
+    console.log(data);
+
+    if (!data) {
+      alert('Message not send');
+    } else {
+      alert('message send successfully');
+      setUserData({ ...userData, message:'' });
+    }
+  };
+
   return (
     <div className="App">
       <Typography gutterBottom variant="h3" align="center">
@@ -40,7 +85,7 @@ const Contact = () => {
       <Grid>
         <Card style={{ maxWidth: 900, padding: '20px 5px', margin: '0 auto' }}>
           <CardContent>
-            <form>
+            <form method="POST">
               <Grid container spacing={1}>
                 <Grid item xs={12}>
                   <TextField
@@ -48,7 +93,7 @@ const Contact = () => {
                     type="text"
                     value={userData.name}
                     placeholder="Enter Name"
-                   
+                    onChange={handleInputs}
                     variant="outlined"
                     sx={{
                       mx: 2,
@@ -60,8 +105,8 @@ const Contact = () => {
                     name="email"
                     type="email"
                     placeholder="Enter email"
+                    onChange={handleInputs}
                     value={userData.email}
-                    
                     variant="outlined"
                     sx={{
                       mx: 2,
@@ -74,8 +119,8 @@ const Contact = () => {
                     name="phone"
                     type="number"
                     placeholder="Enter phone number"
+                    onChange={handleInputs}
                     value={userData.phone}
-                  
                     variant="outlined"
                     sx={{
                       mx: 2,
@@ -85,8 +130,12 @@ const Contact = () => {
                   />
 
                   <TextField
+                   name="message"
+                    type="text"
+                    value={userData.message}
                     id="outlined-multiline-static"
-                   placeholder='Please type your Reviews'
+                    placeholder="Please type your Reviews"
+                    onChange={handleInputs}
                     multiline
                     rows={5}
                     variant="outlined"
@@ -95,7 +144,12 @@ const Contact = () => {
                 </Grid>
 
                 <Grid item xs={12}>
-                  <Button type="submit" variant="outlined" color="primary">
+                  <Button
+                    type="submit"
+                    variant="outlined"
+                    color="primary"
+                    onClick={ContactHandler}
+                  >
                     Send Message
                   </Button>
                 </Grid>

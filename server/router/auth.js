@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 require('../db/conn');
 const User = require('../model/userSchema');
 const Authenticate = require('../middleware/Authenticate');
-const cookieParser = require("cookie-parser");
+const cookieParser = require('cookie-parser');
 
 router.use(cookieParser());
 
@@ -46,12 +46,11 @@ router.post('/signin', async (req, res) => {
     if (userLogin) {
       const isMatch = await bcrypt.compare(password, userLogin.password);
       const token = await userLogin.generateAuthToken();
-      
 
-      res.cookie('jwtoken',token,{
-        expires:new Date(Date.now()+25892000000),
-        httpOnly:true
-      })
+      res.cookie('jwtoken', token, {
+        expires: new Date(Date.now() + 25892000000),
+        httpOnly: true,
+      });
       if (!isMatch) {
         res.status(400).json({ error: 'user error ps' });
       } else {
@@ -65,15 +64,36 @@ router.post('/signin', async (req, res) => {
   }
 });
 
-router.get('/about',Authenticate, (req, res) => {
+router.get('/about', Authenticate, (req, res) => {
   console.log('about us');
   res.send(req.rootUser);
-
 });
-router.get('/getData',Authenticate, (req, res) => {
+router.get('/getData', Authenticate, (req, res) => {
   console.log('about us');
   res.send(req.rootUser);
+});
 
+router.post('/contact', Authenticate, async (req, res) => {
+  try {
+    const { name, email, phone, message } = req.body;
+    if (!name || !email || !phone || !message) {
+      console.log('messgae failed');
+      return res.json({ error: 'Failed' });
+    }
+    const userContact = await User.findOne({ _id: req.userID });
+    if (userContact) {
+      const userMessage = await userContact.addMessage(
+        name,
+        email,
+        phone,
+        message
+      );
+      await userContact.save();
+      res.status(201).json({ message: 'Successfully send message' });
+    }
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 module.exports = router;

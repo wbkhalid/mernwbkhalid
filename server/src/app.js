@@ -12,11 +12,6 @@ app.use(require('../router/auth'));
 
 const PORT = process.env.PORT;
 
-
-
-app.get('/contact', (req, res) => {
-  res.send('hlo from contact');
-});
 app.get('/signin', (req, res) => {
   res.send('hlo from signin');
 });
